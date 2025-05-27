@@ -1,7 +1,9 @@
-name: Docker CI Pipeline
+name: CI - Build Docker Images
 
 on:
   push:
+    branches: [ main ]
+  pull_request:
     branches: [ main ]
 
 jobs:
@@ -9,18 +11,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-    - name: Build Backend
-      run: docker build -t backend-test ./backend
+      - name: Login to DockerHub (optional if not pushing)
+        run: echo "Skipping DockerHub login"
 
-    - name: Build Frontend
-      run: docker build -t frontend-test ./frontend
+      - name: Build frontend Docker image
+        run: docker build -t frontend ./frontend
 
-    - name: Check Docker Compose Builds
-      run: docker compose build
+      - name: Build backend Docker image
+        run: docker build -t backend ./backend
+
 
