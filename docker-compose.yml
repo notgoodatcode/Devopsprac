@@ -1,0 +1,42 @@
+services:
+  database:
+    image: postgres:13
+    container_name: postgres-container
+    environment:
+      POSTGRES_USER: devopsuser
+      POSTGRES_PASSWORD: devopspassword
+      POSTGRES_DB: devopsdb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - devops-net
+
+  backend:
+    build:
+      context: ./backend
+    container_name: backend-container
+    ports:
+      - "5000:5000"
+    depends_on:
+      - database
+    networks:
+      - devops-net
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend-container
+    ports:
+      - "5001:5001"
+    depends_on:
+      - backend
+    networks:
+      - devops-net
+
+volumes:
+  pgdata:
+
+networks:
+  devops-net:
+    driver: bridge
+
